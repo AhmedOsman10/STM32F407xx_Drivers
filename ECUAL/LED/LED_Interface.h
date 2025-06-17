@@ -18,8 +18,8 @@ typedef struct{
 }LED_t;
 
 void LED_init(LED_t *led);
-void LED_trunOn(LED_t *led);
-void LED_trunOff(LED_t *led);
+void LED_turnOn(LED_t *led);
+void LED_turnOff(LED_t *led);
 /* To use the LED_blink() function, you must first initialize the SYSTICK peripheral by calling the following function: SYSTICK_init(); */
 void LED_blink(LED_t *led, uint32_t milliseconds);
 

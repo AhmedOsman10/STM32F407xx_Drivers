@@ -27,7 +27,7 @@ typedef struct
 	 */
 	uint32_t EXTICR[4];  // EXTI configuration registers 1 to 4. This array provides convenient access to all 4 EXTICR registers in the above comment.
 	uint32_t CMPCR;
-} SYSCFG_RegDef_t;
+}SYSCFG_RegDef_t;
 
 /* Macro to access the SYSCFG peripheral via a pointer to its base address */
 #define SYSCFG  ((SYSCFG_RegDef_t*)SYSCFG_BASEADDR)

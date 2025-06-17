@@ -28,7 +28,7 @@ typedef struct{
 								   uint8_t IPR[240]; This way, each element (elements of indexing) directly corresponds to one interrupt's priority byte.
 	 	 	 	 	 	 	 	 */
 
-} NVIC_RegDef_t;
+}NVIC_RegDef_t;
 
 #define NVIC					((NVIC_RegDef_t*)(NVIC_BASEADDR))
 

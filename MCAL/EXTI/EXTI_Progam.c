@@ -164,3 +164,57 @@ void EXTI15_10_IRQHandler(void)
 		}
 	}
 }
+
+/*
+ * ------------------------------------------------------------------------------
+ * HOW EXTI WORKS:
+ * ------------------------------------------------------------------------------
+ *
+ * The EXTI (External Interrupt/Event Controller) in STM32 allows peripherals or
+ * GPIO pins to generate **interrupts** or **events** based on signal edges.
+ * This driver handles both software and hardware-triggered EXTI lines.
+ *
+ * 1. INTERRUPT VS EVENT:
+ *    • Interrupt (IMR): When triggered, causes the CPU to jump to an ISR.
+ *    • Event (EMR): When triggered, causes an internal signal but does NOT
+ *      generate an interrupt (no ISR).
+ *
+ * 2. TRIGGER CONFIGURATION:
+ *    • RTSR: Rising trigger selection register.
+ *    • FTSR: Falling trigger selection register.
+ *    • You can enable either or both based on what edge should trigger the EXTI.
+ *
+ * 3. ENABLING AN INTERRUPT:
+ *    EXTI_enableInterruptHardware():
+ *      - Enables interrupt via IMR.
+ *      - Configures rising/falling edges.
+ *      - Stores user-defined callback.
+ *
+ * 4. SOFTWARE TRIGGER:
+ *    EXTI_triggerInterruptSoftware():
+ *      - Manually triggers the interrupt by setting the SWIER bit.
+ *      - Useful for testing or internal signaling.
+ *
+ * 5. EVENTS:
+ *    EXTI_enableEventHardware() and EXTI_enableEventSoftware():
+ *      - Enable event-only generation without CPU interrupt.
+ *
+ * 6. CALLBACK MECHANISM:
+ *    - Each EXTI line (0–15) can have a separate user-defined callback function.
+ *    - These are stored in the EXTI_Call_Function[] array.
+ *    - In ISRs (e.g., EXTI0_IRQHandler), the corresponding callback is called.
+ *    - Pending bit is cleared by writing 1 to EXTI->PR.
+ *
+ * 7. SHARED INTERRUPTS:
+ *    - EXTI lines 5–9 and 10–15 share IRQ handlers (EXTI9_5 and EXTI15_10).
+ *    - The code checks each line’s pending bit and calls the respective callback.
+ *
+ * SUMMARY FLOW:
+ * --------------
+ * [1] Configure GPIO pin to be EXTI source (done in SYSCFG).
+ * [2] Use `EXTI_enableInterruptHardware()` to enable the EXTI line.
+ * [3] On trigger (rising/falling edge or software), EXTI sets pending bit.
+ * [4] NVIC calls the corresponding IRQHandler().
+ * [5] IRQHandler calls the stored callback function.
+ * [6] IRQHandler clears the pending bit.
+ */

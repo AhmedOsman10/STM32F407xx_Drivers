@@ -14,7 +14,7 @@ void LED_init(LED_t *led)
 	GPIO_Speed(led->port, led->pinNumber, GPIO_LOW_SPEED);
 	GPIO_Pull_Up_Pull_Down(led->port, led->pinNumber, GPIO_NO_PULL_UP_NO_PULL_DOWN);
 }
-void LED_trurnOn(LED_t *led)
+void LED_turnOn(LED_t *led)
 {
 	GPIO_Output_Data(led->port, led->pinNumber, GPIO_SET);
 }

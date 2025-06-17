@@ -9,19 +9,19 @@
 #define EXTI_EXTI_REGISTERS_H_
 
 #include <stdint.h>
-#define EXTI_BASEADDR		0x40013C00U
+#define EXTI_BASEADDR      0x40013C00U
 
+// Structure definition representing the EXTI registers
 typedef struct
 {
-	uint32_t IMR;
-	uint32_t EMR;
-	uint32_t RTSR;
-	uint32_t FTSR;
-	uint32_t SWIER;
-	uint32_t PR;
-}EXTI_RegDef_t;
+    uint32_t IMR;     // Interrupt mask register
+    uint32_t EMR;     // Event mask register
+    uint32_t RTSR;    // Rising trigger selection register
+    uint32_t FTSR;    // Falling trigger selection register
+    uint32_t SWIER;   // Software interrupt event register
+    uint32_t PR;      // Pending register
+} EXTI_RegDef_t;
 
-#define EXTI			   ((EXTI_RegDef_t*)(EXTI_BASEADDR))
-
+#define EXTI              ((EXTI_RegDef_t*)(EXTI_BASEADDR))
 
 #endif /* EXTI_EXTI_REGISTERS_H_ */
