@@ -25,7 +25,6 @@ typedef struct
     uint32_t CNT;      // Counter
     uint32_t PSC;      // Prescaler
     uint32_t ARR;      // Auto-reload register
-    uint32_t RCR;      // Repetition counter (optional on some general timers)
     uint32_t CCR1;     // Capture/Compare register 1
     uint32_t CCR2;     // Capture/Compare register 2
     uint32_t CCR3;     // Capture/Compare register 3
@@ -34,9 +33,9 @@ typedef struct
     uint32_t DMAR;     // DMA address for full transfer
 }TIMER_RegDef_t;
 
-#define TIM2    		((TIMER_RegDef_t *)(TIMER_BASEADDR + 0x0000))
-#define TIM3    		((TIMER_RegDef_t *)(TIMER_BASEADDR + 0x0400))
-#define TIM4    		((TIMER_RegDef_t *)(TIMER_BASEADDR + 0x0800))
-#define TIM5    		((TIMER_RegDef_t *)(TIMER_BASEADDR + 0x0C00))
+#define TIM2    		((TIMER_RegDef_t*)(TIMER_BASEADDR + 0x0000))
+#define TIM3    		((TIMER_RegDef_t*)(TIMER_BASEADDR + 0x0400))
+#define TIM4    		((TIMER_RegDef_t*)(TIMER_BASEADDR + 0x0800))
+#define TIM5    		((TIMER_RegDef_t*)(TIMER_BASEADDR + 0x0C00))
 
 #endif /* TIMERS_TIMERS_REGISTERS_H_ */
