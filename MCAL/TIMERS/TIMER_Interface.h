@@ -11,9 +11,25 @@
 #include "TIMER_Registers.h"
 #include "TIMER_Config.h"
 
+#define PWM_MODE_1		0b110
+#define PWM_MODE_2		0b111
+
+#define PWM_MODE		PWM_MODE_1
+
+
+#define ACTIVE_HIGH		0
+#define ACTIVE_LOW		1
+
+#define POLARITY			ACTIVE_HIGH
+
 /**
  * @brief Initialize the timer with the configured prescaler.
- * @param Timer Pointer to the timer peripheral registers.
+ *
+ * - Enables ARPE (Auto-Reload Preload Enable) to buffer ARR.
+ * - Sets the PSC (Prescaler) to divide the timer clock.
+ * - Prepares timer for delay or periodic tasks.
+ *
+ * @param Timer Pointer to the timer peripheral registers (e.g., TIM2, TIM3).
  */
 void TIMER_init(TIMER_RegDef_t *Timer);
 
@@ -38,8 +54,36 @@ void TIMER_init(TIMER_RegDef_t *Timer);
  */
 void TIMER_voidDelayMilliSec(TIMER_RegDef_t *Timer, uint32_t ms);
 
+/**
+ * @brief Enable update interrupt for timer.
+ *
+ * - Sets UIE bit in DIER register.
+ * - Timer will trigger interrupt on overflow (CNT == ARR).
+ *
+ * @param Timer Pointer to the timer peripheral.
+ */
 void TIMER_enableInterrupt(TIMER_RegDef_t *Timer);
+
+/**
+ * @brief Disable timer update interrupt and stop counter.
+ *
+ * - Clears UIE (disable update interrupt).
+ * - Clears CEN (disable counting).
+ *
+ * @param Timer Pointer to the timer peripheral.
+ */
 void TIMER_disableInterrupt_and_Counter(TIMER_RegDef_t *Timer);
+
+/**
+ * @brief Start timer with interrupt after given delay and assign ISR callback.
+ *
+ * @param Timer Pointer to timer (e.g., TIM2).
+ * @param ms Delay in milliseconds.
+ * @param ptr Pointer to callback function to be called on interrupt.
+ * @param Timer_Number Timer index to store in function pointer array (e.g., TIM2 → 2).
+ */
 void TIMER_voidStartCountMilliSeconds(TIMER_RegDef_t *Timer, uint32_t ms, void(*ptr)(void), uint8_t Timer_Number);
+
+void TIMER_generatePWM(TIMER_RegDef_t *Timer, uint8_t channel, uint32_t periode, uint32_t duty_cycle);
 
 #endif /* TIMERS_TIMERS_INTERFACE_H_ */
