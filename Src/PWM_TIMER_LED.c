@@ -33,7 +33,6 @@ int main(void)
     RCC_init();                       // Initialize system clock
     RCC_Peri_Enable(GPIOA_EN);       // Enable clock for GPIOA (needed for PA1)
     RCC_Peri_Enable(TIM2EN);         // Enable clock for TIM2 (used for PWM)
-    SYSTICK_init();
 
     /* ---------------------------------------- */
     /* Step 2: Configure GPIOA Pin 1 for PWM use */
@@ -45,17 +44,13 @@ int main(void)
     /* Step 3: Initialize TIM2 and set PWM */
     /* ---------------------------------- */
     TIMER_init(TIM2);                          // Initialize TIM2 with default prescaler settings
+    TIMER_generatePWM(TIM2, 2, 1000, 500);     // Generate PWM on channel 2 (PA1) with 50% duty cycle and 1 kHz frequency
 
     /* ----------------- */
     /* Step 4: Main loop */
     /* ----------------- */
     while (1)
     {
-        for(int i = 999; i > 2; i--)
-        {
-        	  TIMER_generatePWM(TIM2, 2, 1000, i);
-
-        	  SYSTICK_voidDelayMilliSec(1);
-        }
+        // Infinite loop – PWM runs in hardware
     }
 }

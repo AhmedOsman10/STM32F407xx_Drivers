@@ -25,6 +25,7 @@ typedef struct
     uint32_t CNT;      // Counter
     uint32_t PSC;      // Prescaler
     uint32_t ARR;      // Auto-reload register
+    uint32_t RESER;
     uint32_t CCR1;     // Capture/Compare register 1
     uint32_t CCR2;     // Capture/Compare register 2
     uint32_t CCR3;     // Capture/Compare register 3

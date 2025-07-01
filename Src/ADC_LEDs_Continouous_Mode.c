@@ -15,78 +15,56 @@
     - Blue LED is initialized but not used—can be reserved for future logic.
 */
 
-/* Include necessary hardware abstraction layer (HAL) headers */
-#include "../MCAL/RCC/RCC_Interface.h"         // Provides functions to initialize and enable system clocks
-#include "../MCAL/ADC/ADC_Interface.h"         // Provides functions to configure and read from the ADC
-#include "../MCAL/GPIO/GPIO_Interface.h"       // Provides functions for GPIO pin configuration
-#include "../MCAL/SYSTICK/SYSTICK_Interface.h" // (Not used here) Provides delay/periodic interrupt using SysTick
-#include "../ECUAL/LED/LED_Interface.h"        // Provides LED control abstraction (initialization, ON/OFF)
+#include "../MCAL/RCC/RCC_Interface.h"         // Clock configuration
+#include "../MCAL/ADC/ADC_Interface.h"         // ADC setup and usage
+#include "../MCAL/GPIO/GPIO_Interface.h"       // GPIO control
+#include "../MCAL/SYSTICK/SYSTICK_Interface.h" // (Unused)
+#include "../ECUAL/LED/LED_Interface.h"        // LED abstraction
 
-/* Main application entry point */
 int main(void)
 {
     /* Initialize the system clock */
     RCC_init();
 
-    /* Enable clocks for GPIO ports A, B, C and the ADC1 peripheral */
+    /* Enable clocks for GPIO ports A, B, C and ADC1 */
     RCC_Peri_Enable(GPIOA_EN);
     RCC_Peri_Enable(GPIOB_EN);
     RCC_Peri_Enable(GPIOC_EN);
     RCC_Peri_Enable(ADC1EN);
 
-    /*
-     * Initialize ADC1 in continuous conversion mode with 2 channels in the sequence.
-     * Continuous mode allows the ADC to convert continuously without restarting.
-     */
+    /* Initialize ADC1 in continuous conversion mode with 2 channels */
     ADC_init(ADC1, ADC_MODE_CONTINUOUS_CONV, 2);
 
-    /* Define LED objects with their corresponding GPIO ports and pins */
-    LED_t red    = {GPIOA, 1};  // Red LED on pin PA1
-    LED_t blue   = {GPIOB, 2};  // Blue LED on pin PB2 (not used in this logic)
-    LED_t yellow = {GPIOC, 2};  // Yellow LED on pin PC2
+    /* Define LEDs */
+    LED_t red    = {GPIOA, 1};  // PA1
+    LED_t blue   = {GPIOB, 2};  // PB2
+    LED_t yellow = {GPIOC, 2};  // PC2
 
-    /* Initialize the LEDs (configure the pins as output, etc.) */
+    /* Initialize LED pins */
     LED_init(&red);
     LED_init(&blue);
     LED_init(&yellow);
 
-    /* Configure ADC input pins as analog mode */
-    GPIO_Mode(GPIOA, GPIO_PIN_5, GPIO_ANALOG);  // PA5 = ADC Channel 5
-    GPIO_Mode(GPIOB, GPIO_PIN_1, GPIO_ANALOG);  // PB1 = ADC Channel 9 (unused)
-    GPIO_Mode(GPIOC, GPIO_PIN_3, GPIO_ANALOG);  // PC3 = ADC Channel 13
+    /* ✅ Configure analog input pins using the new GPIO function */
+    GPIO_configureAnalogInput(GPIOA, GPIO_PIN_5);  // PA5 → ADC Channel 5
+    GPIO_configureAnalogInput(GPIOB, GPIO_PIN_1);  // PB1 → ADC Channel 9 (unused)
+    GPIO_configureAnalogInput(GPIOC, GPIO_PIN_3);  // PC3 → ADC Channel 13
 
-    /* Disable internal pull-up/pull-down resistors for analog pins */
-    GPIO_Pull_Up_Pull_Down(GPIOA, GPIO_PIN_5, GPIO_NO_PULL_UP_NO_PULL_DOWN);
-    GPIO_Pull_Up_Pull_Down(GPIOB, GPIO_PIN_1, GPIO_NO_PULL_UP_NO_PULL_DOWN);
-    GPIO_Pull_Up_Pull_Down(GPIOC, GPIO_PIN_3, GPIO_NO_PULL_UP_NO_PULL_DOWN);
+    /* Configure ADC channels in conversion sequence */
+    ADC_enableChannel(ADC1, 5, 1);   // Channel 5 first
+    ADC_enableChannel(ADC1, 13, 2);  // Channel 13 second
 
-    /*
-     * Configure ADC channels to be part of the conversion sequence:
-     * - Channel 5 (PA5) as the first channel
-     * - Channel 13 (PC3) as the second channel
-     * Channel 9 (PB1) is not enabled or used in this example.
-     */
-    ADC_enableChannel(ADC1, 5, 1);   // First in sequence
-    ADC_enableChannel(ADC1, 13, 2);  // Second in sequence
-
-    /* Start ADC conversions */
+    /* Start ADC conversion */
     ADC_startConversion(ADC1);
 
-    /* Buffer to store ADC conversion results */
-    uint16_t adc_values[2];
+    uint16_t adc_values[2];  // Buffer for ADC values
 
-    /* Main loop: monitor ADC readings and control LEDs */
+    /* Main loop */
     while (1)
     {
-        /*
-         * Read 2 ADC conversion results from the sequence:
-         * - adc_values[0] corresponds to channel 5
-         * - adc_values[1] corresponds to channel 13
-         */
         ADC_readSequence(ADC1, adc_values, 2);
-        /* Control red LED based on channel 5 value */
+
         (adc_values[0] > 1000) ? LED_turnOn(&red) : LED_turnOff(&red);
-        /* Control yellow LED based on channel 13 value */
         (adc_values[1] > 1000) ? LED_turnOn(&yellow) : LED_turnOff(&yellow);
     }
 }
